@@ -19,14 +19,18 @@ def run_command(command):
         return e.stderr.strip()
 
 def mount_partition(disk_path, mount_path):
-    if not os.path.ismount(mount_path):
-        err = run_command(["mkdir", "-p", mount_path])
-        if err is not None:
-            return err
-        
-        err = run_command(["mount", disk_path, mount_path])
-        if err is not None:
-            return err
+    if not os.path.exists(mount_path):
+        os.makedirs(mount_path)
+
+    else:
+        if not os.path.ismount(mount_path):
+            os.makedirs(mount_path)
+        else:
+            return "Folder already contains a mount!"
+
+    err = run_command(["mount", disk_path, mount_path])
+    if err is not None:
+        return err
 
 def unmount_partition(mount_path):
     if os.path.ismount(mount_path):
@@ -68,7 +72,7 @@ def main():
     parser = argparse.ArgumentParser(description="If you are locked out, then I unlock your root")
     parser.add_argument("disk_path", type = str, help="Path to the VMware disk: IE: `/dev/sda5`")
     parser.add_argument("mnt_path", type = str, default="/tmp/vmw", help="Path to the VMware disk: IE: `/dev/sda5`")
-    parser.add_arguement("temp_dir", type = str, default="/tmp/vmw-unpack", help="Temp dir for unpacking file that will be cleaned at the end of the run")
+    parser.add_argument("temp_dir", type = str, default="/tmp/vmw-unpack", help="Temp dir for unpacking file that will be cleaned at the end of the run")
     args = parser.parse_args()
 
     try:
