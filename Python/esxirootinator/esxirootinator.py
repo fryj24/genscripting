@@ -2,45 +2,43 @@ import subprocess
 import os
 import re
 
-#Assign "vmware_dir" value = to variable string of "/mnt/sda" disk related VMWare OS disk
-vmware_dir = "/mnt/sda5" #<<<<<<<<<<<<<<CHANGE ME HERE
-#Example /mnt/sda6, /mnt/sda7 and so on. Refer to readme, you need
-# to know this beforehand and it needs to be the correct disk to work.
+#Assign some values = to variable strings and create pre req folders
 
-# In this section we are running our script command and capturing the output.
+vmware_disk = "/dev/sda5" #<<<<<<<<<<<<<<CHANGE ME HERE!!! PLEASE VERIFY AND CHANGE THE NUMBER IF NEEDED!
+#      Example sda6, sda7 and so on. Refer to readme file on github, you need to know this beforehand and 
+#      it needs to be the correct disk to work.
+vmware_mount = "/mnt/vmw"
+temp_dir = "/temp"
 
-# This first command will make a mount point folder pointing to the VMWare disk in question. 
-# Before you run this script don't forget to validate the device name "sda#" first above in case you missed that!
+#create the vmw mount point folder in /mnt
+result = subprocess.run(["mkdir", vmware_mount], capture_output=True, text=True)
 
-result = subprocess.run(["mkdir", vmware_dir], capture_output=True, text=True)
+#mounts vmware disk to vmware mountpoint
+result = subprocess.run(["mount", vmware_disk, vmware_mount], capture_output=True, text=True)
 
 # Now we need a temporary folder to work with here we check for "/temp" first in the below defined function with an if/else.
             #the folder temp can exist already on your bootable environment, we wont delete it; do this later on your own!
 
 def create_directory_if_needed (directory_path):
     """Checking if temporary directory exist."""
-    if not os.path.exists("/temp"):
-        os.makedirs("/temp")
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
         print(f"Directory '{directory_path}' created successfully.")
     else:
         print(f"Directory '{directory_path}' already exists.")
 
 # sets the temporary directory to create and call the above defined function
-directory_to_create = "/temp"
+directory_to_create = temp_dir
 create_directory_if_needed(directory_to_create)
 
-# Create the "Hammertime" folder as the mount point.
-result = subprocess.run(["mkdir", "/temp/hammertime"], capture_output=True, text=True)
-result = subprocess.run(["mount", vmware_dir, "/mnt/hammertime"], capture_output=True, text=True)
-
 #extract state tgz into temporary folder then extract local tgz file within temporary location
-result = subprocess.run(["tar", "-xf", "/mnt/hammertime/state.tgz", "–C", "/temp/"], capture_output=True, text=True)
+result = subprocess.run(["tar", "-xf", "/mnt/vmw/state.tgz", "–C", "/temp/"], capture_output=True, text=True)
 result = subprocess.run(["tar", "-xf", "/temp/local.tgz", "–C", "/temp/"], capture_output=True, text=True)
 
 #work magic on the shadow file using re to read file lines to look for root :: and clear in between then write the change
 
 # Path to the shadow file
-shadow_file_path = '/temp/etc/shadow'
+shadow_file_path = '/temp/local/etc/shadow'
 
 # Read the file, modify it, and write back
 with open(shadow_file_path, 'r') as file:
@@ -59,10 +57,10 @@ with open(shadow_file_path, 'w') as file:
 print(f"Successfully edited {shadow_file_path}.")
 
 #move shadow back into archive and copy state gz back into VMWare OS disk after merging changes then unmount hammertime
-result = subprocess.run(["tar", "-czf", "/temp/local.tgz", "etc"], capture_output=True, text=True)
+result = subprocess.run(["tar", "-czf", "/temp/local.tgz", "/temp/local/etc"], capture_output=True, text=True)
 result = subprocess.run(["tar", "-czf", "/temp/state.tgz", "/temp/local.tgz"], capture_output=True, text=True)
-result = subprocess.run(["mv", "-czf", "/temp/state.tgz", "/mnt/hammertime"], capture_output=True, text=True)
-result = subprocess.run(["umount", "/mnt/hammertime"], capture_output=True, text=True)
+result = subprocess.run(["mv", "-czf", "/temp/state.tgz", "/mnt/vmw"], capture_output=True, text=True)
+result = subprocess.run(["umount", "/mnt/vmw"], capture_output=True, text=True)
 
 # Print the output
 print(result.stdout)
