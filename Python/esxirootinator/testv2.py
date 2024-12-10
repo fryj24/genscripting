@@ -48,8 +48,8 @@ def extract_shadow(mount_path, temp_dir):
         
         return None
 
-    except:
-        return "Tar Extraction Failed"
+    except Exception as err:
+        return err
 
 def pack_shadow(mount_path, temp_dir):
     try:

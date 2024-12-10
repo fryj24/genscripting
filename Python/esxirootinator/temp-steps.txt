@@ -1,0 +1,40 @@
+su into root
+No needed but placing:  fdisk –l | grep /dev/sda
+
+1. Make mount point:
+mkdir /mnt/sda5
+
+2. make temp dir:
+ mkdir /temp
+
+3. Mount sda5 disk to mount point:
+mount /dev/sda5 /mnt/sda5
+
+4. Make sure state is there:
+ ls -l /mnt/sda5/state.tgz
+
+5. Unpack state:
+ tar -xf /mnt/sda5/state.tgz –C /temp/
+
+6. Unpack local:
+tar -xf /temp/local.tgz –C /temp/
+
+7. Edit shadow:
+nano /temp/etc/shadow
+
+8. change dir to temp cd /temp
+
+9. repack etc folder with shadow:
+ tar -czf local.tgz etc
+
+10. repack local to state:
+ tar -czf state.tgz local.tgz
+
+11. Move state back to ESXi host:
+mv state.tgz /mnt/sda5/
+
+12. Unmount the esxi disk mount point:
+ umount /mnt/sda5
+
+13. Reboot into ESXi host and f2 at DCUI screen and set a root password
+When first promoted after initial crack "root" has NO password to get in
