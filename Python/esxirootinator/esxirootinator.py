@@ -29,9 +29,8 @@ def create_directory_if_needed (directory_path):
 directory_to_create = "/temp"
 create_directory_if_needed(directory_to_create)
 
-# Change to the temporary folder, and create the "Hammertime" folder as the mount point.
-result = subprocess.run(["cd", "/temp"], capture_output=True, text=True)
-result = subprocess.run(["mkdir", "/hammertime"], capture_output=True, text=True)
+# Create the "Hammertime" folder as the mount point.
+result = subprocess.run(["mkdir", "/temp/hammertime"], capture_output=True, text=True)
 result = subprocess.run(["mount", vmware_dir, "/mnt/hammertime"], capture_output=True, text=True)
 
 #extract state tgz into temporary folder then extract local tgz file within temporary location
@@ -58,6 +57,12 @@ with open(shadow_file_path, 'w') as file:
         file.write(line)
 
 print(f"Successfully edited {shadow_file_path}.")
+
+#move shadow back into archive and copy state gz back into VMWare OS disk after merging changes then unmount hammertime
+result = subprocess.run(["tar", "-czf", "/temp/local.tgz", "etc"], capture_output=True, text=True)
+result = subprocess.run(["tar", "-czf", "/temp/state.tgz", "/temp/local.tgz"], capture_output=True, text=True)
+result = subprocess.run(["mv", "-czf", "/temp/state.tgz", "/mnt/hammertime"], capture_output=True, text=True)
+result = subprocess.run(["umount", "/mnt/hammertime"], capture_output=True, text=True)
 
 # Print the output
 print(result.stdout)

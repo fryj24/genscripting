@@ -4,6 +4,12 @@
 
 You absolutely must set the correct number after "sda" disk device number that relates to your VMWare OS disk first prior to running the script.
 
+Other important disclaimers -
+1. Not supported by Broadcom - VMWare use at your own risk.
+2. You have backups right? check your backup software ensure you got something within desired retention window for any possible loss.
+3. This script was initially tested Dec 9th on VMWare ESXi 7.0 U1 only its unclear if other older or newer versions will work. Please use/test at your own will.
+4. I am not responsible for support or loss if the script affects systems in any way. Proceed with caution.
+
 To do so see steps below, credit to the article I formulated this scrip based on and its respective author Kevin Soltow:
 https://www.starwindsoftware.com/blog/forgot-esxi-root-password-no-problems-4-ways-reset/
 
