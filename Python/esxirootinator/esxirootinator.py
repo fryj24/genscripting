@@ -38,7 +38,7 @@ result = subprocess.run(["tar", "-xf", "/temp/local.tgz", "–C", "/temp/"], cap
 #work magic on the shadow file using re to read file lines to look for root :: and clear in between then write the change
 
 # Path to the shadow file
-shadow_file_path = '/temp/local/etc/shadow'
+shadow_file_path = '/temp/etc/shadow'
 
 # Read the file, modify it, and write back
 with open(shadow_file_path, 'r') as file:
