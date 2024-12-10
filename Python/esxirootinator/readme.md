@@ -1,3 +1,5 @@
+# this script is being built, please do not use until this message is cleared!
+
 # At the top of my script you will find -
 
 ## vmware_dir = "/mnt/sda5" #<<<<<<<<<<<<<<CHANGE ME HERE
