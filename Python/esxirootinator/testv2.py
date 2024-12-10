@@ -65,7 +65,7 @@ def modify_shadow():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="If you are locked out, then i can fuck your mom")
+    parser = argparse.ArgumentParser(description="If you are locked out, then I unlock your root")
     parser.add_argument("disk_path", type = str, help="Path to the VMware disk: IE: `/dev/sda5`")
     parser.add_argument("mnt_path", type = str, default="/tmp/vmw", help="Path to the VMware disk: IE: `/dev/sda5`")
     parser.add_arguement("temp_dir", type = str, default="/tmp/vmw-unpack", help="Temp dir for unpacking file that will be cleaned at the end of the run")
